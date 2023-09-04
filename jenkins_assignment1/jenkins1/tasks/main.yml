@@ -1,0 +1,36 @@
+---
+# tasks file for jenkins_role
+- name: Update all packages to their latest version
+  package:
+    name: "*"
+    state: latest
+    update_cache: yes
+- name: Install  "openjdk-11-jdk"
+  apt:
+    name: openjdk-11-jdk
+    state: latest
+- name: download jenkins repo apt URL for
+  apt_key:
+    url: https://pkg.jenkins.io/debian-stable/jenkins.io-2023.key
+    state: present
+- name: ensure the repository is configured
+  apt_repository:
+    repo: 'deb https://pkg.jenkins.io/debian-stable binary/'
+    state: present
+- name: Install  "jenkins"
+  apt:
+    name: jenkins
+    state: latest
+- name: Enable jenkins
+  service:
+    name: jenkins
+    enabled: yes
+- name: Start jenkins, if not started
+  service:
+    name: jenkins
+    state: started
+- name: Stop jenkins , if started
+  service:
+    name: jenkins
+    state: stopped
+  notify: restart jenkins
